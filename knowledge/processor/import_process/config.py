@@ -11,16 +11,10 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-"""
-@dataclass:是 Python 3.7+ 引入的装饰器，用于自动生成类的样板代码。
-它会自动为类生成以下方法：
-__init__() - 构造函数
-__repr__() - 字符串表示
-__eq__() - 相等比较
-__hash__() - 哈希（可选）
-"""
-
-
+'''
+使用@dataclass装饰器，自动管理配置的加载和访问；
+配置分为七大类：文档处理，LLM，Milvus，MinerU，MinIO，向量，速率限制
+'''
 @dataclass
 class ImportConfig:
     """导入流程配置"""
@@ -33,11 +27,6 @@ class ImportConfig:
     item_name_chunk_k: int = 3  # 商品名识别时使用的切片数量
     item_name_chunk_size: int = 2500  # 商品名识别时使用的切片内容长度
 
-    """
-    对于你的场景（从环境变量读取配置），必须使用 field(default_factory=lambda: ...)，因为：
-    ✅ 支持运行时环境变量变化 ✅ 避免模块加载时序问题 ✅ 保持代码风格一致 ✅ 更符合配置管理的最佳实践
-    如果直接赋值，可能会导致环境变量修改后不生效的 bug！
-    """
     image_extensions: Set[str] = field(
         default_factory=lambda: {".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp"}
     )
@@ -111,20 +100,12 @@ class ImportConfig:
         """从环境变量加载配置"""
         return cls()
 
-    # http://192.168.6.150:9000/
+    # http://127.0.0.1:9000/
     def get_minio_base_url(self):
         base_protocol = "https://" if self.minio_secure else "http://"
         return base_protocol + f"{self.minio_endpoint}"
 
-
-# ==================== 全局单例 ====================
-# 下划线前缀：Python 约定表示"私有"或"内部使用"
-# 暗示不应该直接从模块外部访问，应该通过 get_config() 函数获取
-# 注意线程安全：多线程环境需要加锁
 _config: Optional[ImportConfig] = None
-
-
-# _lock = threading.Lock()
 
 # 单例获取函数
 def get_config() -> ImportConfig:
