@@ -55,7 +55,7 @@ class ConfigurationError(ImportProcessError):
     """配置错误：环境变量缺失或配置值无效"""
     pass
 
-
+# 文件处理类（文件，PDF,图片）
 class FileProcessingError(ImportProcessError):
     """文件处理错误：文件不存在、格式错误、读写失败"""
     pass
@@ -85,7 +85,7 @@ class LLMError(ImportProcessError):
     """LLM 调用错误：API 调用失败、响应解析失败"""
     pass
 
-
+# 存储类（数据库，Milvus, Minio）
 class StorageError(ImportProcessError):
     """存储错误：数据库操作失败"""
     pass
