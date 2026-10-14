@@ -17,3 +17,15 @@ class ImportConfig(BaseSettings):
     max_content_length: int = 500
     class Config:
         env_file = ".env"
+
+
+exceptions.py
+设计了一套异常层次结构，用类的继承关系来给错误分类。捕获时可以利用多态特性，在不同粒度上处理异常——精确到具体组件，或者粗粒度地按类别兜底。
+三级捕获粒度：精确捕获 → 分类捕获 → 统一兜底
+自定义异常：
+1.继承 Exception，不要继承 BaseException
+2.基类定义异常的统一结构（message/node_name/cause），子类按需扩展
+3.子类只写 pass，靠类名区分类型
+4.加 docstring 说明使用场景
+except 会匹配该类型及其所有子类;子类 except 必须写在父类 except 前面，否则子类分支永远不会执行;利用多态实现灵活的异常分类处理
+通过自定义 cause 属性或 Python 原生 raise ... from e 语法保留原始异常;形成异常链，既能看到业务层错误描述，也能追溯底层原始异常
